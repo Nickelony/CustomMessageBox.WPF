@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\cn.png" />
+    <None Remove="Assets\de.png" />
+    <None Remove="Assets\es.png" />
+    <None Remove="Assets\fr.png" />
+    <None Remove="Assets\gb.png" />
+    <None Remove="Assets\Icon.png" />
+    <None Remove="Assets\it.png" />
+    <None Remove="Assets\pl.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CustomMessageBox.WPF\CustomMessageBox.WPF.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\cn.png" />
+    <Resource Include="Assets\de.png" />
+    <Resource Include="Assets\es.png" />
+    <Resource Include="Assets\fr.png" />
+    <Resource Include="Assets\gb.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\it.png" />
+    <Resource Include="Assets\pl.png" />
+  </ItemGroup>
+
+</Project>

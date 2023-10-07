@@ -1,0 +1,45 @@
+﻿<Window
+	x:Class="CustomMessageBox.WPF.CMessageBox"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:CustomMessageBox.WPF"
+	DataContext="{Binding RelativeSource={RelativeSource Self}}"
+	RenderOptions.BitmapScalingMode="HighQuality"
+	ResizeMode="NoResize"
+	ShowInTaskbar="False"
+	SnapsToDevicePixels="True"
+	Style="{DynamicResource CMessageBoxWindow}"
+	WindowStartupLocation="CenterOwner">
+
+	<StackPanel
+		Margin="{Binding Padding}"
+		local:SpacingSetter.Spacing="{Binding MessagePanelToButtonsPanelSpacing}"
+		Orientation="{Binding DialogContentOrientation}">
+		<StackPanel
+			HorizontalAlignment="{Binding HorizontalMessagePanelAlignment}"
+			VerticalAlignment="{Binding VerticalMessagePanelAlignment}"
+			local:SpacingSetter.Spacing="{Binding IconToMessageSpacing}"
+			Orientation="{Binding MessagePanelOrientation}">
+			<Grid
+				x:Name="PART_IconGrid"
+				Width="{Binding MaxIconWidth}"
+				Height="{Binding MaxIconHeight}"
+				MaxWidth="{Binding MaxIconWidth}"
+				MaxHeight="{Binding MaxIconHeight}"
+				HorizontalAlignment="{Binding HorizontalIconAlignment}"
+				VerticalAlignment="{Binding VerticalIconAlignment}">
+				<Path x:Name="PART_PathIcon" Stretch="Uniform" />
+				<Image x:Name="PART_ImageIcon" />
+			</Grid>
+			<Border HorizontalAlignment="{Binding HorizontalMessageAlignment}" VerticalAlignment="{Binding VerticalMessageAlignment}">
+				<ContentPresenter x:Name="PART_ContentPresenter" />
+			</Border>
+		</StackPanel>
+		<StackPanel
+			x:Name="PART_ButtonsPanel"
+			HorizontalAlignment="{Binding HorizontalButtonsPanelAlignment}"
+			VerticalAlignment="{Binding VerticalButtonsPanelAlignment}"
+			local:SpacingSetter.Spacing="{Binding ButtonSpacing}"
+			Orientation="{Binding ButtonsPanelOrientation}" />
+	</StackPanel>
+</Window>

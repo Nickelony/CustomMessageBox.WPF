@@ -1,0 +1,66 @@
+﻿<Window
+	x:Class="CustomMessageBox.WPF.Demo.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="CustomMessageBox.WPF Demo"
+	Width="550"
+	Height="375"
+	WindowStartupLocation="CenterScreen">
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<Grid.Resources>
+			<Style TargetType="Button">
+				<Setter Property="MinWidth" Value="175" />
+				<Setter Property="Height" Value="24" />
+				<Setter Property="HorizontalAlignment" Value="Center" />
+				<Setter Property="HorizontalContentAlignment" Value="Center" />
+				<Setter Property="Margin" Value="0,0,0,5" />
+			</Style>
+		</Grid.Resources>
+
+		<StackPanel
+			Grid.ColumnSpan="2"
+			Margin="0,15,0,0"
+			HorizontalAlignment="Center">
+			<TextBlock
+				HorizontalAlignment="Center"
+				FontSize="24"
+				Text="MessageBox Examples:" />
+			<TextBlock FontSize="12" Text="There is way more ways to customize them to your liking, these are just examples." />
+		</StackPanel>
+
+		<StackPanel
+			Grid.Row="1"
+			Margin="30"
+			HorizontalAlignment="Right">
+			<TextBlock Margin="0,0,0,5" FontSize="24">Traditional layouts:</TextBlock>
+			<Button Click="Button_Traditional_OK">OK</Button>
+			<Button Click="Button_Traditional_YesNoCancel">Yes / No / Cancel</Button>
+			<Button Click="Button_Traditional_BottomCenter">Buttons in the Center</Button>
+			<Button Click="Button_Traditional_BottomRight">Buttons on the Right</Button>
+			<Button Click="Button_Traditional_BottomLeft">Buttons on the Left</Button>
+			<Button Click="Button_Traditional_CustomImage">Custom image</Button>
+		</StackPanel>
+
+		<StackPanel
+			Grid.Row="1"
+			Grid.Column="1"
+			Margin="30"
+			HorizontalAlignment="Left">
+			<TextBlock Margin="0,0,0,5" FontSize="24">Custom layouts:</TextBlock>
+			<Button Click="Button_Custom1">Custom 1</Button>
+			<Button Click="Button_Custom2">Custom 2</Button>
+			<Button Click="Button_Custom3">Custom 3</Button>
+			<Button Click="Button_Custom4">Custom 4</Button>
+		</StackPanel>
+	</Grid>
+</Window>
