@@ -27,7 +27,8 @@
 				MaxWidth="{Binding MaxIconWidth}"
 				MaxHeight="{Binding MaxIconHeight}"
 				HorizontalAlignment="{Binding HorizontalIconAlignment}"
-				VerticalAlignment="{Binding VerticalIconAlignment}">
+				VerticalAlignment="{Binding VerticalIconAlignment}"
+				UseLayoutRounding="True">
 				<Path x:Name="PART_PathIcon" Stretch="Uniform" />
 				<Image x:Name="PART_ImageIcon" />
 			</Grid>

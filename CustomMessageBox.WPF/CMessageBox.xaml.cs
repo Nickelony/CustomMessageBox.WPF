@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -39,7 +40,9 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public static string ContinueText = "Continue";
 
 	public static Thickness DefaultPadding = new(16);
+	public static bool AlwaysShowTitleBarIcon = false;
 
+	public static bool AlwaysUseDefaultSystemIcons = false;
 	public static double DefaultMaxIconWidth = 32;
 	public static double DefaultMaxIconHeight = 32;
 
@@ -107,6 +110,16 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	private void RaisePropertyChanged(string propertyName)
 		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+	/// <summary>
+	/// Determines whether the icon in the title bar should be shown. The icon is inherited from the owner window.
+	/// </summary>
+	public bool ShowTitleBarIcon { get; set; } = AlwaysShowTitleBarIcon;
+
+	/// <summary>
+	/// Determines whether default system icons should be used instead of the custom ones.
+	/// </summary>
+	public bool UseDefaultSystemIcons { get; set; } = AlwaysUseDefaultSystemIcons;
 
 	/// <summary>
 	/// Maximum width of the icon which is shown inside the Message Panel.
@@ -357,13 +370,6 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		IsVisibleChanged += CMessageBox_IsVisibleChanged;
 	}
 
-	private void CMessageBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-	{
-		IsVisibleChanged -= CMessageBox_IsVisibleChanged;
-		SizeToContent = SizeToContent.WidthAndHeight;
-		// SizeToContent needs to be set later, otherwise custom window styles will be messed up
-	}
-
 	public CMessageBox(object message, string? caption = null) : this()
 	{
 		Title = caption ?? string.Empty;
@@ -372,10 +378,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		SetMessageIcon(null);
 	}
 
-	public CMessageBox(object message, string? caption = null, MessageBoxIcon icon = MessageBoxIcon.None) : this(message, caption)
+	public CMessageBox(object message, string? caption = null, CMessageBoxIcon icon = CMessageBoxIcon.None) : this(message, caption)
 		=> SetMessageIcon(icon);
 
-	public CMessageBox(object message, string? caption = null, BitmapImage? icon = null) : this(message, caption)
+	public CMessageBox(object message, string? caption = null, ImageSource? icon = null) : this(message, caption)
 		=> SetMessageIcon(icon);
 
 	#endregion Construction
@@ -386,36 +392,36 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// Shows the message box with the specified buttons.
 	/// <para>The owner of the dialog is determined by the currently active Window or the MainWindow.</para>
 	/// </summary>
-	public TResult Show<TResult>(params MessageBoxButton<TResult>[] buttons) where TResult : struct
+	public TResult Show<TResult>(params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), buttons);
 
 	/// <summary>
 	/// Shows the message box with the specified buttons.
 	/// </summary>
-	public TResult Show<TResult>(Window? owner, params MessageBoxButton<TResult>[] buttons) where TResult : struct
+	public TResult Show<TResult>(Window? owner, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
 		Icon = owner?.Icon;
 
 		var buttonPanel = (StackPanel)FindName("PART_ButtonsPanel");
 		TResult result = default;
 
-		void AddButton(MessageBoxButton<TResult> messageBoxButton)
+		void AddButton(CMessageBoxButton<TResult> messageBoxButton)
 		{
 			var button = new Button
 			{
 				MinWidth = MinButtonWidth,
 				MinHeight = MinButtonHeight,
 				Content = messageBoxButton.Content,
-				IsDefault = messageBoxButton.SpecialRole == SpecialButtonRole.IsDefault,
-				IsCancel = messageBoxButton.SpecialRole == SpecialButtonRole.IsCancel
+				IsDefault = messageBoxButton.SpecialRole == CSpecialButtonRole.IsDefault,
+				IsCancel = messageBoxButton.SpecialRole == CSpecialButtonRole.IsCancel
 			};
 
-			if (messageBoxButton.Style is not null)
-				button.Style = messageBoxButton.Style;
+			if (messageBoxButton.StyleKey is not null && TryFindResource(messageBoxButton.StyleKey) is Style givenStyle)
+				button.Style = givenStyle;
 			else if (ButtonStyleOverride is not null)
 				button.Style = ButtonStyleOverride;
-			else if (TryFindResource(BUTTON_STYLE_KEY) is Style style)
-				button.Style = style;
+			else if (TryFindResource(BUTTON_STYLE_KEY) is Style overrideStyle)
+				button.Style = overrideStyle;
 
 			button.Click += delegate
 			{
@@ -439,14 +445,14 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		return result;
 	}
 
-	/// <inheritdoc cref="Show{TResult}(MessageBoxButton{TResult}[])"/>
-	public MessageBoxResult Show(MessageBoxButtons buttons,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <inheritdoc cref="Show{TResult}(CMessageBoxButton{TResult}[])"/>
+	public CMessageBoxResult Show(CMessageBoxButtons buttons,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(WindowHelper.FindViableOwner(), buttons, defaultButton);
 
-	/// <inheritdoc cref="Show{TResult}(Window?, MessageBoxButton{TResult}[])"/>
-	public MessageBoxResult Show(Window? owner, MessageBoxButtons buttons,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <inheritdoc cref="Show{TResult}(Window?, CMessageBoxButton{TResult}[])"/>
+	public CMessageBoxResult Show(Window? owner, CMessageBoxButtons buttons,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(owner, CreatePresetButtons(buttons, defaultButton));
 
 	#endregion Show()
@@ -461,10 +467,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="defaultButton">Determines which <see cref="Button" /> should have its <c>IsDefault</c> value set to <see langword="true" />.</param>
-	/// <returns>A <see cref="MessageBoxResult"/>.</returns>
-	public static MessageBoxResult Show(object message, string? caption = null,
-		MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <returns>A <see cref="CMessageBoxResult"/>.</returns>
+	public static CMessageBoxResult Show(object message, string? caption = null,
+		CMessageBoxButtons buttons = CMessageBoxButtons.OK, CMessageBoxIcon icon = CMessageBoxIcon.None,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(WindowHelper.FindViableOwner(), message, caption, buttons, icon, defaultButton);
 
 	/// <summary>
@@ -475,10 +481,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="defaultButton">Determines which <see cref="Button" /> should have its <c>IsDefault</c> value set to <see langword="true" />.</param>
-	/// <returns>A <see cref="MessageBoxResult"/>.</returns>
-	public static MessageBoxResult Show(object message, string? caption,
-		MessageBoxButtons buttons, BitmapImage? icon,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <returns>A <see cref="CMessageBoxResult"/>.</returns>
+	public static CMessageBoxResult Show(object message, string? caption,
+		CMessageBoxButtons buttons, ImageSource? icon,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(WindowHelper.FindViableOwner(), message, caption, buttons, icon, defaultButton);
 
 	/// <summary>
@@ -489,7 +495,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
 	public static TResult Show<TResult>(object message, string? caption = null,
-		MessageBoxIcon icon = MessageBoxIcon.None, params MessageBoxButton<TResult>[] buttons) where TResult : struct
+		CMessageBoxIcon icon = CMessageBoxIcon.None, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), message, caption, icon, buttons);
 
 	/// <summary>
@@ -500,7 +506,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
 	public static TResult Show<TResult>(object message, string? caption,
-		BitmapImage? icon, params MessageBoxButton<TResult>[] buttons) where TResult : struct
+		ImageSource? icon, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), message, caption, icon, buttons);
 
 	/// <summary>
@@ -511,10 +517,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="defaultButton">Determines which <see cref="Button" /> should have its <c>IsDefault</c> value set to <see langword="true" />.</param>
-	/// <returns>A <see cref="MessageBoxResult"/>.</returns>
-	public static MessageBoxResult Show(Window? owner, object message, string? caption = null,
-		MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.None,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <returns>A <see cref="CMessageBoxResult"/>.</returns>
+	public static CMessageBoxResult Show(Window? owner, object message, string? caption = null,
+		CMessageBoxButtons buttons = CMessageBoxButtons.OK, CMessageBoxIcon icon = CMessageBoxIcon.None,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(owner, message, caption, icon, CreatePresetButtons(buttons, defaultButton));
 
 	/// <summary>
@@ -525,10 +531,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="defaultButton">Determines which <see cref="Button" /> should have its <c>IsDefault</c> value set to <see langword="true" />.</param>
-	/// <returns>A <see cref="MessageBoxResult"/>.</returns>
-	public static MessageBoxResult Show(Window? owner, object message, string? caption,
-		MessageBoxButtons buttons, BitmapImage? icon,
-		MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	/// <returns>A <see cref="CMessageBoxResult"/>.</returns>
+	public static CMessageBoxResult Show(Window? owner, object message, string? caption,
+		CMessageBoxButtons buttons, ImageSource? icon,
+		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(owner, message, caption, icon, CreatePresetButtons(buttons, defaultButton));
 
 	/// <summary>
@@ -539,7 +545,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
 	public static TResult Show<TResult>(Window? owner, object message, string? caption = null,
-		MessageBoxIcon icon = MessageBoxIcon.None, params MessageBoxButton<TResult>[] buttons) where TResult : struct
+		CMessageBoxIcon icon = CMessageBoxIcon.None, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
 		var box = new CMessageBox(message, caption, icon);
 		return box.Show(owner, buttons);
@@ -553,7 +559,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
 	public static TResult Show<TResult>(Window? owner, object message, string? caption,
-		BitmapImage? icon, params MessageBoxButton<TResult>[] buttons) where TResult : struct
+		ImageSource? icon, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
 		var box = new CMessageBox(message, caption, icon);
 		return box.Show(owner, buttons);
@@ -563,10 +569,51 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	#region Other methods
 
+	private void CMessageBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+	{
+		IsVisibleChanged -= CMessageBox_IsVisibleChanged;
+
+		if (!ShowTitleBarIcon)
+			this.HideIcon();
+
+		SizeToContent = SizeToContent.WidthAndHeight;
+		// SizeToContent needs to be set later, otherwise custom window styles will be messed up
+	}
+
 	/// <summary>
 	/// Sets the preset icon which should be shown inside the Message Panel.
 	/// </summary>
-	public void SetMessageIcon(MessageBoxIcon icon)
+	public void SetMessageIcon(CMessageBoxIcon icon)
+	{
+		if (UseDefaultSystemIcons && icon is not CMessageBoxIcon.None)
+			SetDefaultSystemIcon(icon);
+		else
+			SetPathIcon(icon);
+	}
+
+	private void SetDefaultSystemIcon(CMessageBoxIcon icon)
+	{
+		System.Drawing.Icon? systemIcon = icon switch
+		{
+			CMessageBoxIcon.Question => System.Drawing.SystemIcons.Question,
+			CMessageBoxIcon.Error => System.Drawing.SystemIcons.Error,
+			CMessageBoxIcon.Warning => System.Drawing.SystemIcons.Warning,
+			CMessageBoxIcon.Information => System.Drawing.SystemIcons.Information,
+			_ => null
+		};
+
+		if (systemIcon is null)
+			return;
+
+		BitmapSource imageSource = Imaging.CreateBitmapSourceFromHIcon(
+			systemIcon.Handle,
+			Int32Rect.Empty,
+			BitmapSizeOptions.FromEmptyOptions());
+
+		SetMessageIcon(imageSource);
+	}
+
+	private void SetPathIcon(CMessageBoxIcon icon)
 	{
 		if (FindName("PART_ImageIcon") is Image image)
 			image.Visibility = Visibility.Collapsed;
@@ -577,31 +624,31 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 			pathIcon.Data = icon switch
 			{
-				MessageBoxIcon.Question => QuestionIconGeometry,
-				MessageBoxIcon.Error => ErrorIconGeometry,
-				MessageBoxIcon.Warning => WarningIconGeometry,
-				MessageBoxIcon.Information => InformationIconGeometry,
+				CMessageBoxIcon.Question => QuestionIconGeometry,
+				CMessageBoxIcon.Error => ErrorIconGeometry,
+				CMessageBoxIcon.Warning => WarningIconGeometry,
+				CMessageBoxIcon.Information => InformationIconGeometry,
 				_ => Geometry.Parse(string.Empty)
 			};
 
 			pathIcon.Fill = icon switch
 			{
-				MessageBoxIcon.Question => QuestionIconColor,
-				MessageBoxIcon.Error => ErrorIconColor,
-				MessageBoxIcon.Warning => WarningIconColor,
-				MessageBoxIcon.Information => InformationIconColor,
+				CMessageBoxIcon.Question => QuestionIconColor,
+				CMessageBoxIcon.Error => ErrorIconColor,
+				CMessageBoxIcon.Warning => WarningIconColor,
+				CMessageBoxIcon.Information => InformationIconColor,
 				_ => Brushes.Transparent
 			};
 		}
 
-		if (icon == MessageBoxIcon.None && FindName("PART_IconGrid") is Grid grid)
+		if (icon == CMessageBoxIcon.None && FindName("PART_IconGrid") is Grid grid)
 			grid.Visibility = Visibility.Collapsed;
 	}
 
 	/// <summary>
 	/// Sets a custom icon which should be shown inside the Message Panel.
 	/// </summary>
-	public void SetMessageIcon(BitmapImage? icon)
+	public void SetMessageIcon(ImageSource? icon)
 	{
 		if (FindName("PART_PathIcon") is Path pathIcon)
 			pathIcon.Visibility = Visibility.Collapsed;
@@ -622,46 +669,46 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 			contentPresenter.Content = content;
 	}
 
-	private static MessageBoxButton<MessageBoxResult>[] CreatePresetButtons(MessageBoxButtons buttons, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.None)
+	private static CMessageBoxButton<CMessageBoxResult>[] CreatePresetButtons(CMessageBoxButtons buttons, CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 	{
-		var buttonList = new List<MessageBoxButton<MessageBoxResult>>();
+		var buttonList = new List<CMessageBoxButton<CMessageBoxResult>>();
 
-		void AddButtonToList(MessageBoxButton<MessageBoxResult> messageBoxButton)
+		void AddButtonToList(CMessageBoxButton<CMessageBoxResult> messageBoxButton)
 		{
 			if (buttonList.Count == (int)defaultButton)
-				messageBoxButton.SpecialRole = SpecialButtonRole.IsDefault;
+				messageBoxButton.SpecialRole = CSpecialButtonRole.IsDefault;
 
 			buttonList.Add(messageBoxButton);
 		}
 
-		if (buttons is MessageBoxButtons.OK or MessageBoxButtons.OKCancel)
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(OKText, MessageBoxResult.OK));
+		if (buttons is CMessageBoxButtons.OK or CMessageBoxButtons.OKCancel)
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(OKText, CMessageBoxResult.OK));
 
-		if (buttons is MessageBoxButtons.YesNo or MessageBoxButtons.YesNoCancel)
+		if (buttons is CMessageBoxButtons.YesNo or CMessageBoxButtons.YesNoCancel)
 		{
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(YesText, MessageBoxResult.Yes));
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(NoText, MessageBoxResult.No));
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(YesText, CMessageBoxResult.Yes));
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(NoText, CMessageBoxResult.No));
 		}
 
-		if (buttons is MessageBoxButtons.AbortRetryIgnore)
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(AbortText, MessageBoxResult.Abort));
+		if (buttons is CMessageBoxButtons.AbortRetryIgnore)
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(AbortText, CMessageBoxResult.Abort));
 
-		if (buttons is MessageBoxButtons.AbortRetryIgnore or MessageBoxButtons.RetryCancel)
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(RetryText, MessageBoxResult.Retry));
+		if (buttons is CMessageBoxButtons.AbortRetryIgnore or CMessageBoxButtons.RetryCancel)
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(RetryText, CMessageBoxResult.Retry));
 
-		if (buttons is MessageBoxButtons.AbortRetryIgnore)
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(IgnoreText, MessageBoxResult.Ignore));
+		if (buttons is CMessageBoxButtons.AbortRetryIgnore)
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(IgnoreText, CMessageBoxResult.Ignore));
 
-		if (buttons is MessageBoxButtons.OKCancel or
-			MessageBoxButtons.YesNoCancel or
-			MessageBoxButtons.RetryCancel or
-			MessageBoxButtons.CancelTryContinue)
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(CancelText, MessageBoxResult.Cancel, SpecialButtonRole.IsCancel));
+		if (buttons is CMessageBoxButtons.OKCancel or
+			CMessageBoxButtons.YesNoCancel or
+			CMessageBoxButtons.RetryCancel or
+			CMessageBoxButtons.CancelTryContinue)
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(CancelText, CMessageBoxResult.Cancel, CSpecialButtonRole.IsCancel));
 
-		if (buttons is MessageBoxButtons.CancelTryContinue)
+		if (buttons is CMessageBoxButtons.CancelTryContinue)
 		{
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(TryAgainText, MessageBoxResult.TryAgain));
-			AddButtonToList(new MessageBoxButton<MessageBoxResult>(ContinueText, MessageBoxResult.Continue));
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(TryAgainText, CMessageBoxResult.TryAgain));
+			AddButtonToList(new CMessageBoxButton<CMessageBoxResult>(ContinueText, CMessageBoxResult.Continue));
 		}
 
 		return buttonList.ToArray();

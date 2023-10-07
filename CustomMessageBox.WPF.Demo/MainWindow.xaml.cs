@@ -14,6 +14,8 @@ public partial class MainWindow : Window
 
 	private void Button_Traditional_OK(object? sender, RoutedEventArgs e)
 	{
+		CMessageBox.AlwaysUseDefaultSystemIcons = true;
+
 		CMessageBox.Show(
 			"This is a traditional message box with an \"OK\" button.",
 			"Traditional 1");
@@ -24,9 +26,9 @@ public partial class MainWindow : Window
 		CMessageBox.Show(
 			"This is a traditional message box with \"YesNoCancel\" buttons.",
 			"Traditional 2",
-			MessageBoxButtons.YesNoCancel,
-			MessageBoxIcon.Question,
-			MessageBoxDefaultButton.Button1);
+			CMessageBoxButtons.YesNoCancel,
+			CMessageBoxIcon.Question,
+			CMessageBoxDefaultButton.Button1);
 	}
 
 	private void Button_Traditional_BottomCenter(object? sender, RoutedEventArgs e)
@@ -34,12 +36,12 @@ public partial class MainWindow : Window
 		var messageBox = new CMessageBox(
 			"This is a traditional message box with \"YesNo\" buttons.\n" +
 			"The buttons are aligned to the center.",
-			"Traditional 3", MessageBoxIcon.Information)
+			"Traditional 3", CMessageBoxIcon.Information)
 		{
 			HorizontalButtonsPanelAlignment = HorizontalAlignment.Center
 		};
 
-		messageBox.Show(MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button1);
+		messageBox.Show(CMessageBoxButtons.YesNo, CMessageBoxDefaultButton.Button1);
 	}
 
 	private void Button_Traditional_BottomRight(object? sender, RoutedEventArgs e)
@@ -48,9 +50,9 @@ public partial class MainWindow : Window
 			"This is a traditional message box with \"YesNo\" buttons.\n" +
 			"The buttons are aligned to the right.",
 			"Traditional 4",
-			MessageBoxButtons.YesNo,
-			MessageBoxIcon.Error,
-			MessageBoxDefaultButton.Button1);
+			CMessageBoxButtons.YesNo,
+			CMessageBoxIcon.Error,
+			CMessageBoxDefaultButton.Button1);
 	}
 
 	private void Button_Traditional_BottomLeft(object? sender, RoutedEventArgs e)
@@ -58,12 +60,12 @@ public partial class MainWindow : Window
 		var messageBox = new CMessageBox(
 			"This is a traditional message box with \"YesNo\" buttons.\n" +
 			"The buttons are aligned to the left.",
-			"Traditional 5", MessageBoxIcon.Warning)
+			"Traditional 5", CMessageBoxIcon.Warning)
 		{
 			HorizontalButtonsPanelAlignment = HorizontalAlignment.Left
 		};
 
-		messageBox.Show(MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button1);
+		messageBox.Show(CMessageBoxButtons.YesNo, CMessageBoxDefaultButton.Button1);
 	}
 
 	private void Button_Traditional_CustomImage(object? sender, RoutedEventArgs e)
@@ -79,11 +81,13 @@ public partial class MainWindow : Window
 			MaxIconHeight = 64
 		};
 
-		messageBox.Show(MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button1);
+		messageBox.Show(CMessageBoxButtons.YesNo, CMessageBoxDefaultButton.Button1);
 	}
 
 	private void Button_Custom1(object? sender, RoutedEventArgs e)
 	{
+		CMessageBox.AlwaysUseDefaultSystemIcons = false;
+
 		var textBlock = new TextBlock
 		{
 			Text = "This is a custom message box with \"YesNoCancel\" buttons.\n" +
@@ -91,7 +95,7 @@ public partial class MainWindow : Window
 			TextAlignment = TextAlignment.Center
 		};
 
-		var messageBox = new CMessageBox(textBlock, "Custom 1", MessageBoxIcon.Error)
+		var messageBox = new CMessageBox(textBlock, "Custom 1", CMessageBoxIcon.Error)
 		{
 			DialogContentOrientation = Orientation.Horizontal,
 			MessagePanelOrientation = Orientation.Vertical,
@@ -101,9 +105,9 @@ public partial class MainWindow : Window
 		};
 
 		messageBox.Show(
-			new MessageBoxButton<MessageBoxResult>(CMessageBox.YesText, MessageBoxResult.Yes, SpecialButtonRole.IsDefault),
-			new MessageBoxButton<MessageBoxResult>(CMessageBox.NoText, MessageBoxResult.No),
-			new MessageBoxButton<MessageBoxResult>(CMessageBox.CancelText, MessageBoxResult.Cancel, SpecialButtonRole.IsCancel)
+			new CMessageBoxButton<CMessageBoxResult>(CMessageBox.YesText, CMessageBoxResult.Yes, CSpecialButtonRole.IsDefault),
+			new CMessageBoxButton<CMessageBoxResult>(CMessageBox.NoText, CMessageBoxResult.No),
+			new CMessageBoxButton<CMessageBoxResult>(CMessageBox.CancelText, CMessageBoxResult.Cancel, CSpecialButtonRole.IsCancel)
 		);
 	}
 
@@ -116,7 +120,7 @@ public partial class MainWindow : Window
 			TextAlignment = TextAlignment.Center
 		};
 
-		var messageBox = new CMessageBox(textBlock, "Custom 2", MessageBoxIcon.Information)
+		var messageBox = new CMessageBox(textBlock, "Custom 2", CMessageBoxIcon.Information)
 		{
 			MessagePanelOrientation = Orientation.Vertical,
 			HorizontalButtonsPanelAlignment = HorizontalAlignment.Center,
@@ -124,8 +128,8 @@ public partial class MainWindow : Window
 		};
 
 		messageBox.Show(
-			new MessageBoxButton<MessageBoxResult>("Yes, Confirm", MessageBoxResult.Yes, SpecialButtonRole.IsDefault),
-			new MessageBoxButton<MessageBoxResult>("No, Cancel", MessageBoxResult.Cancel, SpecialButtonRole.IsCancel)
+			new CMessageBoxButton<CMessageBoxResult>("Yes, Confirm", CMessageBoxResult.Yes, CSpecialButtonRole.IsDefault),
+			new CMessageBoxButton<CMessageBoxResult>("No, Cancel", CMessageBoxResult.Cancel, CSpecialButtonRole.IsCancel)
 		);
 	}
 
@@ -139,7 +143,7 @@ public partial class MainWindow : Window
 			TextAlignment = TextAlignment.Center
 		};
 
-		var messageBox = new CMessageBox(textBlock, "Custom 3", MessageBoxIcon.Warning)
+		var messageBox = new CMessageBox(textBlock, "Custom 3", CMessageBoxIcon.Warning)
 		{
 			MessagePanelOrientation = Orientation.Vertical,
 			HorizontalButtonsPanelAlignment = HorizontalAlignment.Center,
@@ -147,8 +151,8 @@ public partial class MainWindow : Window
 		};
 
 		messageBox.Show(
-			new MessageBoxButton<CustomMessageBoxResult>("Accept", CustomMessageBoxResult.Accept, SpecialButtonRole.None),
-			new MessageBoxButton<CustomMessageBoxResult>("Decline", CustomMessageBoxResult.Decline)
+			new CMessageBoxButton<CustomMessageBoxResult>("Accept", CustomMessageBoxResult.Accept, CSpecialButtonRole.None),
+			new CMessageBoxButton<CustomMessageBoxResult>("Decline", CustomMessageBoxResult.Decline)
 		);
 	}
 
@@ -161,6 +165,7 @@ public partial class MainWindow : Window
 			"The icon is custom and is displayed above the text.",
 			"Custom 4", bitmap)
 		{
+			ShowTitleBarIcon = true,
 			Padding = new Thickness(24),
 			DialogContentOrientation = Orientation.Horizontal,
 			MessagePanelOrientation = Orientation.Vertical,
@@ -176,11 +181,8 @@ public partial class MainWindow : Window
 		string[] languages = new[] { "English", "Polish", "German", "Spanish", "Italian", "French", "Chinese" };
 		string[] flagUris = new[] { "gb.png", "pl.png", "de.png", "es.png", "it.png", "fr.png", "cn.png" };
 
-		var buttons = new List<MessageBoxButton<int>>();
-
+		var buttons = new List<CMessageBoxButton<int>>();
 		var iconMargin = new Thickness(6, 0, 6, 0);
-		var buttonStyle = new Style(typeof(Button), (Style)FindResource(typeof(Button)));
-		buttonStyle.Setters.Add(new Setter(HorizontalContentAlignmentProperty, HorizontalAlignment.Left));
 
 		for (int i = 0; i < languages.Length; i++)
 		{
@@ -189,7 +191,7 @@ public partial class MainWindow : Window
 			content.Children.Add(new Image { Source = flagIcon, Margin = iconMargin });
 			content.Children.Add(new TextBlock { Text = languages[i] });
 
-			buttons.Add(new MessageBoxButton<int>(content, i + 1, style: buttonStyle));
+			buttons.Add(new CMessageBoxButton<int>(content, i + 1, styleKey: "LanguageOptionStyle"));
 		}
 
 		int result = messageBox.Show(buttons.ToArray());
@@ -208,6 +210,6 @@ public partial class MainWindow : Window
 			CMessageBox.Show(content);
 		}
 		else
-			CMessageBox.Show("You have not selected any language.", icon: MessageBoxIcon.Information);
+			CMessageBox.Show("You have not selected any language.", icon: CMessageBoxIcon.Information);
 	}
 }

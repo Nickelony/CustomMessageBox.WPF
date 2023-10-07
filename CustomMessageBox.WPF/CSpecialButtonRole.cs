@@ -1,6 +1,6 @@
 ﻿namespace CustomMessageBox.WPF;
 
-public enum SpecialButtonRole
+public enum CSpecialButtonRole
 {
 	None,
 	IsDefault,

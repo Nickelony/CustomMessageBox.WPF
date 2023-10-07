@@ -1,6 +1,6 @@
 ﻿namespace CustomMessageBox.WPF;
 
-public enum MessageBoxIcon
+public enum CMessageBoxIcon
 {
 	None,
 	Question,

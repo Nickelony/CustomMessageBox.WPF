@@ -2,4 +2,11 @@
 	x:Class="CustomMessageBox.WPF.Demo.App"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	StartupUri="MainWindow.xaml" />
+	StartupUri="MainWindow.xaml">
+	<Application.Resources>
+		<Style x:Key="LanguageOptionStyle" TargetType="Button">
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
+			<Setter Property="BorderThickness" Value="0" />
+		</Style>
+	</Application.Resources>
+</Application>

@@ -19,7 +19,7 @@
 
 		<Grid.Resources>
 			<Style TargetType="Button">
-				<Setter Property="MinWidth" Value="175" />
+				<Setter Property="MinWidth" Value="200" />
 				<Setter Property="Height" Value="24" />
 				<Setter Property="HorizontalAlignment" Value="Center" />
 				<Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -42,8 +42,13 @@
 			Grid.Row="1"
 			Margin="30"
 			HorizontalAlignment="Right">
-			<TextBlock Margin="0,0,0,5" FontSize="24">Traditional layouts:</TextBlock>
-			<Button Click="Button_Traditional_OK">OK</Button>
+			<TextBlock
+				Margin="0,0,0,5"
+				HorizontalAlignment="Center"
+				FontSize="24">
+				Traditional layouts:
+			</TextBlock>
+			<Button Click="Button_Traditional_OK">OK - Switch to System Icons</Button>
 			<Button Click="Button_Traditional_YesNoCancel">Yes / No / Cancel</Button>
 			<Button Click="Button_Traditional_BottomCenter">Buttons in the Center</Button>
 			<Button Click="Button_Traditional_BottomRight">Buttons on the Right</Button>
@@ -56,8 +61,13 @@
 			Grid.Column="1"
 			Margin="30"
 			HorizontalAlignment="Left">
-			<TextBlock Margin="0,0,0,5" FontSize="24">Custom layouts:</TextBlock>
-			<Button Click="Button_Custom1">Custom 1</Button>
+			<TextBlock
+				Margin="0,0,0,5"
+				HorizontalAlignment="Center"
+				FontSize="24">
+				Custom layouts:
+			</TextBlock>
+			<Button Click="Button_Custom1">Custom 1 - Switch to Path icons</Button>
 			<Button Click="Button_Custom2">Custom 2</Button>
 			<Button Click="Button_Custom3">Custom 3</Button>
 			<Button Click="Button_Custom4">Custom 4</Button>

@@ -1,6 +1,6 @@
 ﻿namespace CustomMessageBox.WPF;
 
-public enum MessageBoxDefaultButton
+public enum CMessageBoxDefaultButton
 {
 	None = -1,
 	Button1 = 0,

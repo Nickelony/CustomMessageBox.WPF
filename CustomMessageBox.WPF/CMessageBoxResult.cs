@@ -1,6 +1,6 @@
 ﻿namespace CustomMessageBox.WPF;
 
-public enum MessageBoxResult
+public enum CMessageBoxResult
 {
 	None,
 	OK,

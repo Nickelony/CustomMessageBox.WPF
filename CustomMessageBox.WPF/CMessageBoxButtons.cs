@@ -1,6 +1,6 @@
 ﻿namespace CustomMessageBox.WPF;
 
-public enum MessageBoxButtons
+public enum CMessageBoxButtons
 {
 	OK,
 	OKCancel,

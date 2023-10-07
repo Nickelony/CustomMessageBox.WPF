@@ -4,18 +4,18 @@ using System.Windows.Controls;
 
 namespace CustomMessageBox.WPF;
 
-public class SpacingSetter
+internal class SpacingSetter
 {
-	public static double GetSpacing(DependencyObject obj)
+	internal static double GetSpacing(DependencyObject obj)
 		=> (double)obj.GetValue(SpacingProperty);
 
-	public static void SetSpacing(DependencyObject obj, double value)
+	internal static void SetSpacing(DependencyObject obj, double value)
 		=> obj.SetValue(SpacingProperty, value);
 
-	public static readonly DependencyProperty SpacingProperty
+	internal static readonly DependencyProperty SpacingProperty
 		= DependencyProperty.RegisterAttached("Spacing", typeof(double), typeof(SpacingSetter), new UIPropertyMetadata(0.0, OnSpacingChanged));
 
-	public static void OnSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
+	internal static void OnSpacingChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
 		if (sender is not Panel panel)
 			return;
