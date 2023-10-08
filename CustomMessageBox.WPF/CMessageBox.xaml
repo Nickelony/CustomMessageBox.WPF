@@ -11,11 +11,9 @@
 	Style="{DynamicResource CMessageBoxWindow}"
 	WindowStartupLocation="CenterOwner">
 
-	<StackPanel
-		Margin="{Binding Padding}"
-		local:SpacingSetter.Spacing="{Binding MessagePanelToButtonsPanelSpacing}"
-		Orientation="{Binding DialogContentOrientation}">
+	<StackPanel Orientation="{Binding DialogContentOrientation}">
 		<StackPanel
+			Margin="{Binding MessageSectionPadding}"
 			HorizontalAlignment="{Binding HorizontalMessagePanelAlignment}"
 			VerticalAlignment="{Binding VerticalMessagePanelAlignment}"
 			local:SpacingSetter.Spacing="{Binding IconToMessageSpacing}"
@@ -36,11 +34,13 @@
 				<ContentPresenter x:Name="PART_ContentPresenter" />
 			</Border>
 		</StackPanel>
-		<StackPanel
+		<Border Background="{Binding ButtonsSectionBackground}" Padding="{Binding ButtonsSectionPadding}">
+			<StackPanel
 			x:Name="PART_ButtonsPanel"
 			HorizontalAlignment="{Binding HorizontalButtonsPanelAlignment}"
 			VerticalAlignment="{Binding VerticalButtonsPanelAlignment}"
 			local:SpacingSetter.Spacing="{Binding ButtonSpacing}"
 			Orientation="{Binding ButtonsPanelOrientation}" />
+		</Border>
 	</StackPanel>
 </Window>

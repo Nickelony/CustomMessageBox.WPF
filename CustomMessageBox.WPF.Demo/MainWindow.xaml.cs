@@ -14,7 +14,7 @@ public partial class MainWindow : Window
 
 	private void Button_Traditional_OK(object? sender, RoutedEventArgs e)
 	{
-		CMessageBox.AlwaysUseDefaultSystemIcons = true;
+		CMessageBox.AlwaysUsePathIcons = false;
 
 		CMessageBox.Show(
 			"This is a traditional message box with an \"OK\" button.",
@@ -86,7 +86,7 @@ public partial class MainWindow : Window
 
 	private void Button_Custom1(object? sender, RoutedEventArgs e)
 	{
-		CMessageBox.AlwaysUseDefaultSystemIcons = false;
+		CMessageBox.AlwaysUsePathIcons = true;
 
 		var textBlock = new TextBlock
 		{
@@ -101,7 +101,9 @@ public partial class MainWindow : Window
 			MessagePanelOrientation = Orientation.Vertical,
 			ButtonsPanelOrientation = Orientation.Vertical,
 			MaxIconWidth = 192,
-			MaxIconHeight = 192
+			MaxIconHeight = 192,
+			MessageSectionPadding = new Thickness(20, 20, 0, 20),
+			ButtonsSectionBackground = Background,
 		};
 
 		messageBox.Show(
@@ -170,7 +172,6 @@ public partial class MainWindow : Window
 			DialogContentOrientation = Orientation.Horizontal,
 			MessagePanelOrientation = Orientation.Vertical,
 			ButtonsPanelOrientation = Orientation.Vertical,
-			MessagePanelToButtonsPanelSpacing = 24,
 			MinButtonWidth = 90,
 			MinButtonHeight = 32,
 			ButtonSpacing = 12,

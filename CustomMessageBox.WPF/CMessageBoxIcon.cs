@@ -2,9 +2,9 @@
 
 public enum CMessageBoxIcon
 {
-	None,
-	Question,
-	Error,
-	Warning,
-	Information
+	None = 0,
+	Error = 32513,
+	Question = 32514,
+	Warning = 32515,
+	Information = 32516
 }
