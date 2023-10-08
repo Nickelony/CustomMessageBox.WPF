@@ -401,7 +401,18 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 			Style = WindowStyleOverride;
 
 		Padding = DefaultPadding;
+
+		Loaded += CMessageBox_Loaded;
 		IsVisibleChanged += CMessageBox_IsVisibleChanged;
+	}
+
+	private void CMessageBox_Loaded(object sender, RoutedEventArgs e)
+	{
+		if (!ShowTitleBarIcon)
+			this.HideIcon();
+
+		if (_icon is not null)
+			SetMessageIcon(_icon.Value);
 	}
 
 	public CMessageBox(object message, string? caption = null) : this()
@@ -608,12 +619,6 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	private void CMessageBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
 		IsVisibleChanged -= CMessageBox_IsVisibleChanged;
-
-		if (!ShowTitleBarIcon)
-			this.HideIcon();
-
-		if (_icon is not null)
-			SetMessageIcon(_icon.Value);
 
 		SizeToContent = SizeToContent.WidthAndHeight;
 		// SizeToContent needs to be set later, otherwise custom window styles will be messed up
