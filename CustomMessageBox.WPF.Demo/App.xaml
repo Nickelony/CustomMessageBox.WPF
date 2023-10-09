@@ -4,9 +4,16 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	StartupUri="MainWindow.xaml">
 	<Application.Resources>
-		<Style x:Key="LanguageOptionStyle" TargetType="Button">
-			<Setter Property="HorizontalContentAlignment" Value="Left" />
-			<Setter Property="BorderThickness" Value="0" />
-		</Style>
+		<ResourceDictionary>
+			<Style
+				x:Key="LanguageOptionStyle"
+				BasedOn="{StaticResource {x:Type Button}}"
+				TargetType="{x:Type Button}">
+				<Setter Property="Height" Value="Auto" />
+				<Setter Property="HorizontalContentAlignment" Value="Left" />
+				<Setter Property="BorderThickness" Value="0" />
+				<Setter Property="Padding" Value="3" />
+			</Style>
+		</ResourceDictionary>
 	</Application.Resources>
 </Application>

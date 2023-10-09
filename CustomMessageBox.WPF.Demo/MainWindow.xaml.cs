@@ -102,8 +102,8 @@ public partial class MainWindow : Window
 			ButtonsPanelOrientation = Orientation.Vertical,
 			MaxIconWidth = 192,
 			MaxIconHeight = 192,
-			MessageSectionPadding = new Thickness(20, 20, 0, 20),
-			ButtonsSectionBackground = Background,
+			MessagePanelPadding = new Thickness(20, 20, 0, 20),
+			ButtonsPanelBackground = Brushes.Transparent,
 		};
 
 		messageBox.Show(
@@ -212,5 +212,22 @@ public partial class MainWindow : Window
 		}
 		else
 			CMessageBox.Show("You have not selected any language.", icon: CMessageBoxIcon.Information);
+	}
+
+	private void CheckBox_Checked(object sender, RoutedEventArgs e)
+	{
+		Application.Current.Resources.MergedDictionaries.Add(new ResourceDictionary
+		{
+			Source = new Uri("DarkStyles.xaml", UriKind.Relative)
+		});
+
+		if (TryFindResource("Brush_Background_Alternative") is SolidColorBrush brush)
+			CMessageBox.DefaultButtonsPanelBackground = brush;
+	}
+
+	private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+	{
+		Application.Current.Resources.MergedDictionaries.RemoveAt(0);
+		CMessageBox.DefaultButtonsPanelBackground = SystemColors.ControlBrush;
 	}
 }

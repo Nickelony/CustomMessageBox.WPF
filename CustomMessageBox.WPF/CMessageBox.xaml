@@ -13,7 +13,7 @@
 
 	<StackPanel Orientation="{Binding DialogContentOrientation}">
 		<StackPanel
-			Margin="{Binding MessageSectionPadding}"
+			Margin="{Binding MessagePanelPadding}"
 			HorizontalAlignment="{Binding HorizontalMessagePanelAlignment}"
 			VerticalAlignment="{Binding VerticalMessagePanelAlignment}"
 			local:SpacingSetter.Spacing="{Binding IconToMessageSpacing}"
@@ -34,13 +34,13 @@
 				<ContentPresenter x:Name="PART_ContentPresenter" />
 			</Border>
 		</StackPanel>
-		<Border Background="{Binding ButtonsSectionBackground}" Padding="{Binding ButtonsSectionPadding}">
+		<Border Padding="{Binding ButtonsPanelPadding}" Background="{Binding ButtonsPanelBackground}">
 			<StackPanel
-			x:Name="PART_ButtonsPanel"
-			HorizontalAlignment="{Binding HorizontalButtonsPanelAlignment}"
-			VerticalAlignment="{Binding VerticalButtonsPanelAlignment}"
-			local:SpacingSetter.Spacing="{Binding ButtonSpacing}"
-			Orientation="{Binding ButtonsPanelOrientation}" />
+				x:Name="PART_ButtonsPanel"
+				HorizontalAlignment="{Binding HorizontalButtonsPanelAlignment}"
+				VerticalAlignment="{Binding VerticalButtonsPanelAlignment}"
+				local:SpacingSetter.Spacing="{Binding ButtonSpacing}"
+				Orientation="{Binding ButtonsPanelOrientation}" />
 		</Border>
 	</StackPanel>
 </Window>

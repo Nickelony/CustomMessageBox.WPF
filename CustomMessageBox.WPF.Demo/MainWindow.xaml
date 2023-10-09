@@ -18,7 +18,7 @@
 		</Grid.ColumnDefinitions>
 
 		<Grid.Resources>
-			<Style TargetType="Button">
+			<Style TargetType="{x:Type Button}">
 				<Setter Property="MinWidth" Value="200" />
 				<Setter Property="Height" Value="24" />
 				<Setter Property="HorizontalAlignment" Value="Center" />
@@ -71,6 +71,13 @@
 			<Button Click="Button_Custom2">Custom 2</Button>
 			<Button Click="Button_Custom3">Custom 3</Button>
 			<Button Click="Button_Custom4">Custom 4</Button>
+			<CheckBox
+				Margin="0,5,0,0"
+				HorizontalAlignment="Center"
+				Checked="CheckBox_Checked"
+				Unchecked="CheckBox_Unchecked">
+				Use custom theme
+			</CheckBox>
 		</StackPanel>
 	</Grid>
 </Window>

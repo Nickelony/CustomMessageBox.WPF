@@ -10,89 +10,273 @@ using System.Windows.Shapes;
 
 namespace CustomMessageBox.WPF;
 
+/// <summary>
+/// A custom message box for WPF applications.
+/// </summary>
 public partial class CMessageBox : Window, INotifyPropertyChanged
 {
+	/// <summary>
+	/// The string key that is used to style the <see cref="CMessageBox" /> window.
+	/// </summary>
 	public const string WINDOW_STYLE_KEY = "CMessageBoxWindow";
+
+	/// <summary>
+	/// The string key that is used to style the generated buttons inside the <see cref="CMessageBox" />.
+	/// </summary>
 	public const string BUTTON_STYLE_KEY = "CMessageBoxButton";
 
 	#region Default (static) values
 
 	// Using Fluent Icons for Avalonia: http://avaloniaui.github.io/icons.html
 
-	public static Geometry QuestionPathIconGeometry = Geometry.Parse("M24 4C35.0457 4 44 12.9543 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4ZM24 6.5C14.335 6.5 6.5 14.335 6.5 24C6.5 33.665 14.335 41.5 24 41.5C33.665 41.5 41.5 33.665 41.5 24C41.5 14.335 33.665 6.5 24 6.5ZM24.25 32C25.0784 32 25.75 32.6716 25.75 33.5C25.75 34.3284 25.0784 35 24.25 35C23.4216 35 22.75 34.3284 22.75 33.5C22.75 32.6716 23.4216 32 24.25 32ZM24.25 13C27.6147 13 30.5 15.8821 30.5 19.2488C30.502 21.3691 29.7314 22.7192 27.8216 24.7772L26.8066 25.8638C25.7842 27.0028 25.3794 27.7252 25.3409 28.5793L25.3379 28.7411L25.3323 28.8689L25.3143 28.9932C25.2018 29.5636 24.7009 29.9957 24.0968 30.0001C23.4065 30.0049 22.8428 29.4493 22.8379 28.7589C22.8251 26.9703 23.5147 25.7467 25.1461 23.9739L26.1734 22.8762C27.5312 21.3837 28.0012 20.503 28 19.25C28 17.2634 26.2346 15.5 24.25 15.5C22.3307 15.5 20.6142 17.1536 20.5055 19.0587L20.4935 19.3778C20.4295 20.0081 19.8972 20.5 19.25 20.5C18.5596 20.5 18 19.9404 18 19.25C18 15.8846 20.8864 13 24.25 13Z");
-	public static Geometry ErrorPathIconGeometry = Geometry.Parse("M12,2 C17.523,2 22,6.478 22,12 C22,17.522 17.523,22 12,22 C6.477,22 2,17.522 2,12 C2,6.478 6.477,2 12,2 Z M12,3.667 C7.405,3.667 3.667,7.405 3.667,12 C3.667,16.595 7.405,20.333 12,20.333 C16.595,20.333 20.333,16.595 20.333,12 C20.333,7.405 16.595,3.667 12,3.667 Z M11.9986626,14.5022358 C12.5502088,14.5022358 12.9973253,14.9493523 12.9973253,15.5008984 C12.9973253,16.0524446 12.5502088,16.4995611 11.9986626,16.4995611 C11.4471165,16.4995611 11,16.0524446 11,15.5008984 C11,14.9493523 11.4471165,14.5022358 11.9986626,14.5022358 Z M11.9944624,7 C12.3741581,6.99969679 12.6881788,7.28159963 12.7381342,7.64763535 L12.745062,7.7494004 L12.7486629,12.2509944 C12.7489937,12.6652079 12.4134759,13.0012627 11.9992625,13.0015945 C11.6195668,13.0018977 11.3055461,12.7199949 11.2555909,12.3539592 L11.2486629,12.2521941 L11.245062,7.7506001 C11.2447312,7.33638667 11.580249,7.00033178 11.9944624,7 Z");
-	public static Geometry WarningPathIconGeometry = Geometry.Parse("M10.9093922,2.78216375 C11.9491636,2.20625071 13.2471955,2.54089334 13.8850247,3.52240345 L13.9678229,3.66023048 L21.7267791,17.6684928 C21.9115773,18.0021332 22.0085303,18.3772743 22.0085303,18.7586748 C22.0085303,19.9495388 21.0833687,20.9243197 19.9125791,21.003484 L19.7585303,21.0086748 L4.24277801,21.0086748 C3.86146742,21.0086748 3.48641186,20.9117674 3.15282824,20.7270522 C2.11298886,20.1512618 1.7079483,18.8734454 2.20150311,17.8120352 L2.27440063,17.668725 L10.0311968,3.66046274 C10.2357246,3.291099 10.5400526,2.98673515 10.9093922,2.78216375 Z M20.4146132,18.3952808 L12.6556571,4.3870185 C12.4549601,4.02467391 11.9985248,3.89363262 11.6361802,4.09432959 C11.5438453,4.14547244 11.4637001,4.21532637 11.4006367,4.29899869 L11.3434484,4.38709592 L3.58665221,18.3953582 C3.385998,18.7577265 3.51709315,19.2141464 3.87946142,19.4148006 C3.96285732,19.4609794 4.05402922,19.4906942 4.14802472,19.5026655 L4.24277801,19.5086748 L19.7585303,19.5086748 C20.1727439,19.5086748 20.5085303,19.1728883 20.5085303,18.7586748 C20.5085303,18.6633247 20.4903516,18.5691482 20.455275,18.4811011 L20.4146132,18.3952808 L12.6556571,4.3870185 L20.4146132,18.3952808 Z M12.0004478,16.0017852 C12.5519939,16.0017852 12.9991104,16.4489016 12.9991104,17.0004478 C12.9991104,17.5519939 12.5519939,17.9991104 12.0004478,17.9991104 C11.4489016,17.9991104 11.0017852,17.5519939 11.0017852,17.0004478 C11.0017852,16.4489016 11.4489016,16.0017852 12.0004478,16.0017852 Z M11.9962476,8.49954934 C12.3759432,8.49924613 12.689964,8.78114897 12.7399193,9.14718469 L12.7468472,9.24894974 L12.750448,13.7505438 C12.7507788,14.1647572 12.4152611,14.5008121 12.0010476,14.5011439 C11.621352,14.5014471 11.3073312,14.2195442 11.257376,13.8535085 L11.250448,13.7517435 L11.2468472,9.25014944 C11.2465164,8.83593601 11.5820341,8.49988112 11.9962476,8.49954934 Z");
-	public static Geometry InformationPathIconGeometry = Geometry.Parse("M14,2 C20.6274,2 26,7.37258 26,14 C26,20.6274 20.6274,26 14,26 C7.37258,26 2,20.6274 2,14 C2,7.37258 7.37258,2 14,2 Z M14,3.5 C8.20101,3.5 3.5,8.20101 3.5,14 C3.5,19.799 8.20101,24.5 14,24.5 C19.799,24.5 24.5,19.799 24.5,14 C24.5,8.20101 19.799,3.5 14,3.5 Z M14,11 C14.3796833,11 14.6934889,11.2821653 14.7431531,11.6482323 L14.75,11.75 L14.75,19.25 C14.75,19.6642 14.4142,20 14,20 C13.6203167,20 13.3065111,19.7178347 13.2568469,19.3517677 L13.25,19.25 L13.25,11.75 C13.25,11.3358 13.5858,11 14,11 Z M14,7 C14.5523,7 15,7.44772 15,8 C15,8.55228 14.5523,9 14,9 C13.4477,9 13,8.55228 13,8 C13,7.44772 13.4477,7 14,7 Z");
+	/// <summary>
+	/// Default path icon geometry for the "Question" message box.
+	/// </summary>
+	public static Geometry QuestionPathIconGeometry { get; set; } = Geometry.Parse("M24 4C35.0457 4 44 12.9543 44 24C44 35.0457 35.0457 44 24 44C12.9543 44 4 35.0457 4 24C4 12.9543 12.9543 4 24 4ZM24 6.5C14.335 6.5 6.5 14.335 6.5 24C6.5 33.665 14.335 41.5 24 41.5C33.665 41.5 41.5 33.665 41.5 24C41.5 14.335 33.665 6.5 24 6.5ZM24.25 32C25.0784 32 25.75 32.6716 25.75 33.5C25.75 34.3284 25.0784 35 24.25 35C23.4216 35 22.75 34.3284 22.75 33.5C22.75 32.6716 23.4216 32 24.25 32ZM24.25 13C27.6147 13 30.5 15.8821 30.5 19.2488C30.502 21.3691 29.7314 22.7192 27.8216 24.7772L26.8066 25.8638C25.7842 27.0028 25.3794 27.7252 25.3409 28.5793L25.3379 28.7411L25.3323 28.8689L25.3143 28.9932C25.2018 29.5636 24.7009 29.9957 24.0968 30.0001C23.4065 30.0049 22.8428 29.4493 22.8379 28.7589C22.8251 26.9703 23.5147 25.7467 25.1461 23.9739L26.1734 22.8762C27.5312 21.3837 28.0012 20.503 28 19.25C28 17.2634 26.2346 15.5 24.25 15.5C22.3307 15.5 20.6142 17.1536 20.5055 19.0587L20.4935 19.3778C20.4295 20.0081 19.8972 20.5 19.25 20.5C18.5596 20.5 18 19.9404 18 19.25C18 15.8846 20.8864 13 24.25 13Z");
 
-	public static Brush QuestionPathIconColor = new SolidColorBrush(Color.FromArgb(255, 64, 128, 255));
-	public static Brush ErrorPathIconColor = new SolidColorBrush(Color.FromArgb(255, 255, 64, 64));
-	public static Brush WarningPathIconColor = new SolidColorBrush(Color.FromArgb(255, 255, 128, 64));
-	public static Brush InformationPathIconColor = new SolidColorBrush(Color.FromArgb(255, 64, 128, 255));
+	/// <summary>
+	/// Default path icon geometry for the "Error" message box.
+	/// </summary>
+	public static Geometry ErrorPathIconGeometry { get; set; } = Geometry.Parse("M12,2 C17.523,2 22,6.478 22,12 C22,17.522 17.523,22 12,22 C6.477,22 2,17.522 2,12 C2,6.478 6.477,2 12,2 Z M12,3.667 C7.405,3.667 3.667,7.405 3.667,12 C3.667,16.595 7.405,20.333 12,20.333 C16.595,20.333 20.333,16.595 20.333,12 C20.333,7.405 16.595,3.667 12,3.667 Z M11.9986626,14.5022358 C12.5502088,14.5022358 12.9973253,14.9493523 12.9973253,15.5008984 C12.9973253,16.0524446 12.5502088,16.4995611 11.9986626,16.4995611 C11.4471165,16.4995611 11,16.0524446 11,15.5008984 C11,14.9493523 11.4471165,14.5022358 11.9986626,14.5022358 Z M11.9944624,7 C12.3741581,6.99969679 12.6881788,7.28159963 12.7381342,7.64763535 L12.745062,7.7494004 L12.7486629,12.2509944 C12.7489937,12.6652079 12.4134759,13.0012627 11.9992625,13.0015945 C11.6195668,13.0018977 11.3055461,12.7199949 11.2555909,12.3539592 L11.2486629,12.2521941 L11.245062,7.7506001 C11.2447312,7.33638667 11.580249,7.00033178 11.9944624,7 Z");
 
-	public static ImageSource? QuestionIconOverride;
-	public static ImageSource? ErrorIconOverride;
-	public static ImageSource? WarningIconOverride;
-	public static ImageSource? InformationIconOverride;
+	/// <summary>
+	/// Default path icon geometry for the "Warning" message box.
+	/// </summary>
+	public static Geometry WarningPathIconGeometry { get; set; } = Geometry.Parse("M10.9093922,2.78216375 C11.9491636,2.20625071 13.2471955,2.54089334 13.8850247,3.52240345 L13.9678229,3.66023048 L21.7267791,17.6684928 C21.9115773,18.0021332 22.0085303,18.3772743 22.0085303,18.7586748 C22.0085303,19.9495388 21.0833687,20.9243197 19.9125791,21.003484 L19.7585303,21.0086748 L4.24277801,21.0086748 C3.86146742,21.0086748 3.48641186,20.9117674 3.15282824,20.7270522 C2.11298886,20.1512618 1.7079483,18.8734454 2.20150311,17.8120352 L2.27440063,17.668725 L10.0311968,3.66046274 C10.2357246,3.291099 10.5400526,2.98673515 10.9093922,2.78216375 Z M20.4146132,18.3952808 L12.6556571,4.3870185 C12.4549601,4.02467391 11.9985248,3.89363262 11.6361802,4.09432959 C11.5438453,4.14547244 11.4637001,4.21532637 11.4006367,4.29899869 L11.3434484,4.38709592 L3.58665221,18.3953582 C3.385998,18.7577265 3.51709315,19.2141464 3.87946142,19.4148006 C3.96285732,19.4609794 4.05402922,19.4906942 4.14802472,19.5026655 L4.24277801,19.5086748 L19.7585303,19.5086748 C20.1727439,19.5086748 20.5085303,19.1728883 20.5085303,18.7586748 C20.5085303,18.6633247 20.4903516,18.5691482 20.455275,18.4811011 L20.4146132,18.3952808 L12.6556571,4.3870185 L20.4146132,18.3952808 Z M12.0004478,16.0017852 C12.5519939,16.0017852 12.9991104,16.4489016 12.9991104,17.0004478 C12.9991104,17.5519939 12.5519939,17.9991104 12.0004478,17.9991104 C11.4489016,17.9991104 11.0017852,17.5519939 11.0017852,17.0004478 C11.0017852,16.4489016 11.4489016,16.0017852 12.0004478,16.0017852 Z M11.9962476,8.49954934 C12.3759432,8.49924613 12.689964,8.78114897 12.7399193,9.14718469 L12.7468472,9.24894974 L12.750448,13.7505438 C12.7507788,14.1647572 12.4152611,14.5008121 12.0010476,14.5011439 C11.621352,14.5014471 11.3073312,14.2195442 11.257376,13.8535085 L11.250448,13.7517435 L11.2468472,9.25014944 C11.2465164,8.83593601 11.5820341,8.49988112 11.9962476,8.49954934 Z");
 
-	public static string OKText = "OK";
-	public static string YesText = "Yes";
-	public static string NoText = "No";
-	public static string AbortText = "Abort";
-	public static string RetryText = "Retry";
-	public static string IgnoreText = "Ignore";
-	public static string CancelText = "Cancel";
-	public static string TryAgainText = "Try Again";
-	public static string ContinueText = "Continue";
+	/// <summary>
+	/// Default path icon geometry for the "Information" message box.
+	/// </summary>
+	public static Geometry InformationPathIconGeometry { get; set; } = Geometry.Parse("M14,2 C20.6274,2 26,7.37258 26,14 C26,20.6274 20.6274,26 14,26 C7.37258,26 2,20.6274 2,14 C2,7.37258 7.37258,2 14,2 Z M14,3.5 C8.20101,3.5 3.5,8.20101 3.5,14 C3.5,19.799 8.20101,24.5 14,24.5 C19.799,24.5 24.5,19.799 24.5,14 C24.5,8.20101 19.799,3.5 14,3.5 Z M14,11 C14.3796833,11 14.6934889,11.2821653 14.7431531,11.6482323 L14.75,11.75 L14.75,19.25 C14.75,19.6642 14.4142,20 14,20 C13.6203167,20 13.3065111,19.7178347 13.2568469,19.3517677 L13.25,19.25 L13.25,11.75 C13.25,11.3358 13.5858,11 14,11 Z M14,7 C14.5523,7 15,7.44772 15,8 C15,8.55228 14.5523,9 14,9 C13.4477,9 13,8.55228 13,8 C13,7.44772 13.4477,7 14,7 Z");
 
-	public static Thickness DefaultMessageSectionPadding = new(20);
-	public static Thickness DefaultButtonsSectionPadding = new(12);
-	public static Brush DefaultButtonsSectionBackground = SystemColors.ControlBrush;
+	/// <summary>
+	/// Default path icon brush for the "Question" message box.
+	/// </summary>
+	public static Brush QuestionPathIconBrush { get; set; } = new SolidColorBrush(Color.FromRgb(64, 128, 255));
 
-	public static Thickness DefaultPadding = new(0);
-	/// <inheritdoc cref="ShowTitleBarIcon" />
-	public static bool AlwaysShowTitleBarIcon = false;
+	/// <summary>
+	/// Default path icon brush for the "Error" message box.
+	/// </summary>
+	public static Brush ErrorPathIconBrush { get; set; } = new SolidColorBrush(Color.FromRgb(255, 64, 64));
 
-	/// <inheritdoc cref="UsePathIcons" />
-	public static bool AlwaysUsePathIcons = false;
+	/// <summary>
+	/// Default path icon brush for the "Warning" message box.
+	/// </summary>
+	public static Brush WarningPathIconBrush { get; set; } = new SolidColorBrush(Color.FromRgb(255, 128, 64));
 
-	/// <inheritdoc cref="MaxIconWidth" />
-	public static double DefaultMaxIconWidth = 32;
+	/// <summary>
+	/// Default path icon brush for the "Information" message box.
+	/// </summary>
+	public static Brush InformationPathIconBrush { get; set; } = new SolidColorBrush(Color.FromRgb(64, 128, 255));
 
-	/// <inheritdoc cref="MaxIconHeight" />
-	public static double DefaultMaxIconHeight = 32;
+	/// <summary>
+	/// Overrides the "Question" message icon with a custom one.
+	/// </summary>
+	public static ImageSource? QuestionIconOverride { get; set; }
 
-	public static double DefaultMinButtonWidth = 75;
-	public static double DefaultMinButtonHeight = 23;
+	/// <summary>
+	/// Overrides the "Error" message icon with a custom one.
+	/// </summary>
+	public static ImageSource? ErrorIconOverride { get; set; }
 
-	public static double DefaultIconToMessageSpacing = 12;
-	public static double DefaultButtonSpacing = 6;
+	/// <summary>
+	/// Overrides the "Warning" message icon with a custom one.
+	/// </summary>
+	public static ImageSource? WarningIconOverride { get; set; }
 
-	public static Orientation DefaultDialogContentOrientation = Orientation.Vertical;
-	public static Orientation DefaultMessagePanelOrientation = Orientation.Horizontal;
-	public static Orientation DefaultButtonsPanelOrientation = Orientation.Horizontal;
+	/// <summary>
+	/// Overrides the "Information" message icon with a custom one.
+	/// </summary>
+	public static ImageSource? InformationIconOverride { get; set; }
 
-	public static HorizontalAlignment DefaultHorizontalMessagePanelAlignment = HorizontalAlignment.Center;
-	public static VerticalAlignment DefaultVerticalMessagePanelAlignment = VerticalAlignment.Center;
+	/// <summary>
+	/// Default text for the "OK" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string OKText { get; set; } = "OK";
 
-	public static HorizontalAlignment DefaultHorizontalButtonsPanelAlignment = HorizontalAlignment.Right;
-	public static VerticalAlignment DefaultVerticalButtonsPanelAlignment = VerticalAlignment.Center;
+	/// <summary>
+	/// Default text for the "Yes" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string YesText { get; set; } = "Yes";
 
-	public static HorizontalAlignment DefaultHorizontalIconAlignment = HorizontalAlignment.Center;
-	public static VerticalAlignment DefaultVerticalIconAlignment = VerticalAlignment.Center;
+	/// <summary>
+	/// Default text for the "No" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string NoText { get; set; } = "No";
 
-	public static HorizontalAlignment DefaultHorizontalMessageAlignment = HorizontalAlignment.Center;
-	public static VerticalAlignment DefaultVerticalMessageAlignment = VerticalAlignment.Center;
+	/// <summary>
+	/// Default text for the "Abort" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string AbortText { get; set; } = "Abort";
 
-	public static Style? WindowStyleOverride;
-	public static Style? ButtonStyleOverride;
+	/// <summary>
+	/// Default text for the "Retry" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string RetryText { get; set; } = "Retry";
+
+	/// <summary>
+	/// Default text for the "Ignore" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string IgnoreText { get; set; } = "Ignore";
+
+	/// <summary>
+	/// Default text for the "Cancel" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string CancelText { get; set; } = "Cancel";
+
+	/// <summary>
+	/// Default text for the "Try Again" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string TryAgainText { get; set; } = "Try Again";
+
+	/// <summary>
+	/// Default text for the "Continue" button.
+	/// <para>You can use this property for translation purposes.</para>
+	/// </summary>
+	public static string ContinueText { get; set; } = "Continue";
+
+	/// <summary>
+	/// Default padding of the Message Panel (Icon + Message).
+	/// </summary>
+	public static Thickness DefaultMessagePanelPadding { get; set; } = new(20);
+
+	/// <summary>
+	/// Default padding of the Buttons Panel.
+	/// </summary>
+	public static Thickness DefaultButtonsPanelPadding { get; set; } = new(12);
+
+	/// <summary>
+	/// Default background brush of the Buttons Panel.
+	/// </summary>
+	public static Brush DefaultButtonsPanelBackground { get; set; } = SystemColors.ControlBrush;
+
+	/// <summary>
+	/// Default padding of the <see cref="CMessageBox" /> window.
+	/// </summary>
+	public static Thickness DefaultPadding { get; set; } = new(0);
+
+	/// <summary>
+	/// Determines whether the icon in the title bar should always be shown. The icon is inherited from the owner window.
+	/// </summary>
+	public static bool AlwaysShowTitleBarIcon { get; set; } = false;
+
+	/// <summary>
+	/// Determines whether <c>&lt;Path&gt;</c> icons should always be used instead of the default system (or custom overridden) ones.
+	/// </summary>
+	public static bool AlwaysUsePathIcons { get; set; } = false;
+
+	/// <summary>
+	/// Default maximum width of the icon which is shown inside the Message Panel.
+	/// </summary>
+	public static double DefaultMaxIconWidth { get; set; } = 32;
+
+	/// <summary>
+	/// Default maximum height of the icon which is shown inside the Message Panel.
+	/// </summary>
+	public static double DefaultMaxIconHeight { get; set; } = 32;
+
+	/// <summary>
+	/// Default minimum width of the generated buttons.
+	/// </summary>
+	public static double DefaultMinButtonWidth { get; set; } = 75;
+
+	/// <summary>
+	/// Default minimum height of the generated buttons.
+	/// </summary>
+	public static double DefaultMinButtonHeight { get; set; } = 23;
+
+	/// <summary>
+	/// Default spacing between the Icon and the Message inside the Message Panel.
+	/// </summary>
+	public static double DefaultIconToMessageSpacing { get; set; } = 12;
+
+	/// <summary>
+	/// Default spacing between each generated button.
+	/// </summary>
+	public static double DefaultButtonSpacing { get; set; } = 6;
+
+	/// <summary>
+	/// Default main orientation of the dialog. Change this if you want the buttons to be either at the <b>Bottom</b> or to the <b>Right</b> (<i>Left</i> in RTL).
+	/// </summary>
+	public static Orientation DefaultDialogContentOrientation { get; set; } = Orientation.Vertical;
+
+	/// <summary>
+	/// Default orientation of the Message Panel (Icon + Message). Change this if you want the Icon to be either above the Message (Vertical) or next to it (Horizontal).
+	/// </summary>
+	public static Orientation DefaultMessagePanelOrientation { get; set; } = Orientation.Horizontal;
+
+	/// <summary>
+	/// Default orientation of the Buttons Panel.
+	/// </summary>
+	public static Orientation DefaultButtonsPanelOrientation { get; set; } = Orientation.Horizontal;
+
+	/// <summary>
+	/// Default horizontal alignment of the Message Panel (Icon + Message).
+	/// </summary>
+	public static HorizontalAlignment DefaultHorizontalMessagePanelAlignment { get; set; } = HorizontalAlignment.Center;
+
+	/// <summary>
+	/// Default vertical alignment of the Message Panel (Icon + Message).
+	/// </summary>
+	public static VerticalAlignment DefaultVerticalMessagePanelAlignment { get; set; } = VerticalAlignment.Center;
+
+	/// <summary>
+	/// Default horizontal alignment of the Buttons Panel.
+	/// </summary>
+	public static HorizontalAlignment DefaultHorizontalButtonsPanelAlignment { get; set; } = HorizontalAlignment.Right;
+
+	/// <summary>
+	/// Default vertical alignment of the Buttons Panel.
+	/// </summary>
+	public static VerticalAlignment DefaultVerticalButtonsPanelAlignment { get; set; } = VerticalAlignment.Center;
+
+	/// <summary>
+	/// Default horizontal alignment of the Icon inside the Message Panel.
+	/// </summary>
+	public static HorizontalAlignment DefaultHorizontalIconAlignment { get; set; } = HorizontalAlignment.Center;
+
+	/// <summary>
+	/// Default vertical alignment of the Icon inside the Message Panel.
+	/// </summary>
+	public static VerticalAlignment DefaultVerticalIconAlignment { get; set; } = VerticalAlignment.Center;
+
+	/// <summary>
+	/// Default horizontal alignment of the Message Content inside the Message Panel.
+	/// </summary>
+	public static HorizontalAlignment DefaultHorizontalMessageAlignment { get; set; } = HorizontalAlignment.Center;
+
+	/// <summary>
+	/// Default vertical alignment of the Message Content inside the Message Panel.
+	/// </summary>
+	public static VerticalAlignment DefaultVerticalMessageAlignment { get; set; } = VerticalAlignment.Center;
+
+	/// <summary>
+	/// Default style for the <see cref="CMessageBox" /> window.
+	/// </summary>
+	public static Style? WindowStyleOverride { get; set; }
+
+	/// <summary>
+	/// Default style for the generated buttons inside the <see cref="CMessageBox" />.
+	/// </summary>
+	public static Style? ButtonStyleOverride { get; set; }
 
 	#endregion Default (static) values
 
 	#region Private property fields
 
-	private Thickness _messageSectionPadding = DefaultMessageSectionPadding;
-	private Thickness _buttonsSectionPadding = DefaultButtonsSectionPadding;
-	private Brush _buttonsSectionBackground = DefaultButtonsSectionBackground;
+	private readonly CMessageBoxIcon? _cachedIcon;
+
+	private Thickness _messagePanelPadding = DefaultMessagePanelPadding;
+	private Thickness _buttonsPanelPadding = DefaultButtonsPanelPadding;
+	private Brush _buttonsPanelBackground = DefaultButtonsPanelBackground;
 
 	private double _maxIconWidth = DefaultMaxIconWidth;
 	private double _maxIconHeight = DefaultMaxIconHeight;
@@ -123,6 +307,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	#region Public properties
 
+	/// <inheritdoc />
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	private void RaisePropertyChanged(string propertyName)
@@ -134,37 +319,46 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public bool ShowTitleBarIcon { get; set; } = AlwaysShowTitleBarIcon;
 
 	/// <summary>
-	/// Determines whether modern <c>&lt;Path&gt;</c> icons should be used instead of the default system ones.
+	/// Determines whether <c>&lt;Path&gt;</c> icons should be used instead of the default system ones.
 	/// </summary>
 	public bool UsePathIcons { get; set; } = AlwaysUsePathIcons;
 
-	public Thickness MessageSectionPadding
+	/// <summary>
+	/// Padding of the Message Panel (Icon + Message).
+	/// </summary>
+	public Thickness MessagePanelPadding
 	{
-		get => _messageSectionPadding;
+		get => _messagePanelPadding;
 		set
 		{
-			_messageSectionPadding = value;
-			RaisePropertyChanged(nameof(MessageSectionPadding));
+			_messagePanelPadding = value;
+			RaisePropertyChanged(nameof(MessagePanelPadding));
 		}
 	}
 
-	public Thickness ButtonsSectionPadding
+	/// <summary>
+	/// Padding of the Buttons Panel.
+	/// </summary>
+	public Thickness ButtonsPanelPadding
 	{
-		get => _buttonsSectionPadding;
+		get => _buttonsPanelPadding;
 		set
 		{
-			_buttonsSectionPadding = value;
-			RaisePropertyChanged(nameof(ButtonsSectionPadding));
+			_buttonsPanelPadding = value;
+			RaisePropertyChanged(nameof(ButtonsPanelPadding));
 		}
 	}
 
-	public Brush ButtonsSectionBackground
+	/// <summary>
+	/// Background brush of the Buttons Panel.
+	/// </summary>
+	public Brush ButtonsPanelBackground
 	{
-		get => _buttonsSectionBackground;
+		get => _buttonsPanelBackground;
 		set
 		{
-			_buttonsSectionBackground = value;
-			RaisePropertyChanged(nameof(ButtonsSectionBackground));
+			_buttonsPanelBackground = value;
+			RaisePropertyChanged(nameof(ButtonsPanelBackground));
 		}
 	}
 
@@ -364,7 +558,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	}
 
 	/// <summary>
-	/// Horizontal alignment of the Message inside the Message Panel.
+	/// Horizontal alignment of the Message Content inside the Message Panel.
 	/// </summary>
 	public HorizontalAlignment HorizontalMessageAlignment
 	{
@@ -377,7 +571,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	}
 
 	/// <summary>
-	/// Vertical alignment of the Message inside the Message Panel.
+	/// Vertical alignment of the Message Content inside the Message Panel.
 	/// </summary>
 	public VerticalAlignment VerticalMessageAlignment
 	{
@@ -406,15 +600,6 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		IsVisibleChanged += CMessageBox_IsVisibleChanged;
 	}
 
-	private void CMessageBox_Loaded(object sender, RoutedEventArgs e)
-	{
-		if (!ShowTitleBarIcon)
-			this.HideIcon();
-
-		if (_icon is not null)
-			SetMessageIcon(_icon.Value);
-	}
-
 	public CMessageBox(object message, string? caption = null) : this()
 	{
 		Title = caption ?? string.Empty;
@@ -424,12 +609,10 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	}
 
 	public CMessageBox(object message, string? caption = null, CMessageBoxIcon icon = CMessageBoxIcon.None) : this(message, caption)
-		=> _icon = icon;
+		=> _cachedIcon = icon;
 
 	public CMessageBox(object message, string? caption = null, ImageSource? icon = null) : this(message, caption)
 		=> SetMessageIcon(icon);
-
-	private CMessageBoxIcon? _icon = null;
 
 	#endregion Construction
 
@@ -616,9 +799,18 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	#region Other methods
 
+	private void CMessageBox_Loaded(object sender, RoutedEventArgs e)
+	{
+		if (_cachedIcon is not null)
+			SetMessageIcon(_cachedIcon.Value);
+	}
+
 	private void CMessageBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 	{
 		IsVisibleChanged -= CMessageBox_IsVisibleChanged;
+
+		if (!ShowTitleBarIcon)
+			this.HideIcon();
 
 		SizeToContent = SizeToContent.WidthAndHeight;
 		// SizeToContent needs to be set later, otherwise custom window styles will be messed up
@@ -629,7 +821,13 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// </summary>
 	public void SetMessageIcon(CMessageBoxIcon icon)
 	{
-		if (UsePathIcons || icon is CMessageBoxIcon.None)
+		if (FindName("PART_IconGrid") is Grid grid)
+			grid.Visibility = icon == CMessageBoxIcon.None ? Visibility.Collapsed : Visibility.Visible;
+
+		if (icon == CMessageBoxIcon.None)
+			return;
+
+		if (UsePathIcons)
 			SetPathIcon(icon);
 		else
 			SetDefaultSystemIcon(icon);
@@ -684,16 +882,13 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 			pathIcon.Fill = icon switch
 			{
-				CMessageBoxIcon.Question => QuestionPathIconColor,
-				CMessageBoxIcon.Error => ErrorPathIconColor,
-				CMessageBoxIcon.Warning => WarningPathIconColor,
-				CMessageBoxIcon.Information => InformationPathIconColor,
+				CMessageBoxIcon.Question => QuestionPathIconBrush,
+				CMessageBoxIcon.Error => ErrorPathIconBrush,
+				CMessageBoxIcon.Warning => WarningPathIconBrush,
+				CMessageBoxIcon.Information => InformationPathIconBrush,
 				_ => Brushes.Transparent
 			};
 		}
-
-		if (icon == CMessageBoxIcon.None && FindName("PART_IconGrid") is Grid grid)
-			grid.Visibility = Visibility.Collapsed;
 	}
 
 	/// <summary>
