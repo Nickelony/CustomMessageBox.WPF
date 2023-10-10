@@ -325,6 +325,11 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public bool PlaySound { get; set; } = PlaySoundsByDefault;
 
 	/// <summary>
+	/// Overrides the sound which should be played when the <see cref="CMessageBox" /> is shown.
+	/// </summary>
+	public SystemSound? SoundOverride { get; set; }
+
+	/// <summary>
 	/// Determines whether the icon in the title bar should be shown. The icon is inherited from the owner window.
 	/// </summary>
 	public bool ShowTitleBarIcon { get; set; } = ShowTitleBarIconByDefault;
@@ -832,6 +837,12 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	private void TriggerSound()
 	{
+		if (SoundOverride is not null)
+		{
+			SoundOverride.Play();
+			return;
+		}
+
 		switch (_cachedIcon)
 		{
 			case CMessageBoxIcon.Error: SystemSounds.Hand.Play(); break;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -78,7 +79,8 @@ public partial class MainWindow : Window
 			"Traditional 6", bitmap)
 		{
 			MaxIconWidth = 64,
-			MaxIconHeight = 64
+			MaxIconHeight = 64,
+			SoundOverride = SystemSounds.Asterisk
 		};
 
 		messageBox.Show(CMessageBoxButtons.YesNo, CMessageBoxDefaultButton.Button1);
