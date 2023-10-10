@@ -14,7 +14,7 @@ public partial class MainWindow : Window
 
 	private void Button_Traditional_OK(object? sender, RoutedEventArgs e)
 	{
-		CMessageBox.AlwaysUsePathIcons = false;
+		CMessageBox.UsePathIconsByDefault = false;
 
 		CMessageBox.Show(
 			"This is a traditional message box with an \"OK\" button.",
@@ -86,7 +86,7 @@ public partial class MainWindow : Window
 
 	private void Button_Custom1(object? sender, RoutedEventArgs e)
 	{
-		CMessageBox.AlwaysUsePathIcons = true;
+		CMessageBox.UsePathIconsByDefault = true;
 
 		var textBlock = new TextBlock
 		{

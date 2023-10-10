@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Media;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
@@ -144,6 +145,11 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public static string ContinueText { get; set; } = "Continue";
 
 	/// <summary>
+	/// Determines whether pop-up sounds should be played by default.
+	/// </summary>
+	public static bool PlaySoundsByDefault { get; set; } = true;
+
+	/// <summary>
 	/// Default padding of the Message Panel (Icon + Message).
 	/// </summary>
 	public static Thickness DefaultMessagePanelPadding { get; set; } = new(20);
@@ -164,14 +170,14 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public static Thickness DefaultPadding { get; set; } = new(0);
 
 	/// <summary>
-	/// Determines whether the icon in the title bar should always be shown. The icon is inherited from the owner window.
+	/// Determines whether the icon in the title bar should always be shown by default. The icon is inherited from the owner window.
 	/// </summary>
-	public static bool AlwaysShowTitleBarIcon { get; set; } = false;
+	public static bool ShowTitleBarIconByDefault { get; set; } = false;
 
 	/// <summary>
-	/// Determines whether <c>&lt;Path&gt;</c> icons should always be used instead of the default system (or custom overridden) ones.
+	/// Determines whether <c>&lt;Path&gt;</c> icons should always be used by default instead of the default system (or custom overridden) ones.
 	/// </summary>
-	public static bool AlwaysUsePathIcons { get; set; } = false;
+	public static bool UsePathIconsByDefault { get; set; } = false;
 
 	/// <summary>
 	/// Default maximum width of the icon which is shown inside the Message Panel.
@@ -314,14 +320,19 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		=> PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 	/// <summary>
+	/// Determines whether the pop-up sound should be played.
+	/// </summary>
+	public bool PlaySound { get; set; } = PlaySoundsByDefault;
+
+	/// <summary>
 	/// Determines whether the icon in the title bar should be shown. The icon is inherited from the owner window.
 	/// </summary>
-	public bool ShowTitleBarIcon { get; set; } = AlwaysShowTitleBarIcon;
+	public bool ShowTitleBarIcon { get; set; } = ShowTitleBarIconByDefault;
 
 	/// <summary>
 	/// Determines whether <c>&lt;Path&gt;</c> icons should be used instead of the default system ones.
 	/// </summary>
-	public bool UsePathIcons { get; set; } = AlwaysUsePathIcons;
+	public bool UsePathIcons { get; set; } = UsePathIconsByDefault;
 
 	/// <summary>
 	/// Padding of the Message Panel (Icon + Message).
@@ -814,6 +825,20 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 		SizeToContent = SizeToContent.WidthAndHeight;
 		// SizeToContent needs to be set later, otherwise custom window styles will be messed up
+
+		if (PlaySound)
+			TriggerSound();
+	}
+
+	private void TriggerSound()
+	{
+		switch (_cachedIcon)
+		{
+			case CMessageBoxIcon.Error: SystemSounds.Hand.Play(); break;
+			case CMessageBoxIcon.Question: SystemSounds.Question.Play(); break;
+			case CMessageBoxIcon.Warning: SystemSounds.Exclamation.Play(); break;
+			case CMessageBoxIcon.Information: SystemSounds.Asterisk.Play(); break;
+		}
 	}
 
 	/// <summary>
