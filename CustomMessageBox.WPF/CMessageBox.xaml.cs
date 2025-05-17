@@ -278,6 +278,9 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 	#region Private property fields
 
+	/// <summary>
+	/// Cached icon to be used when the message box is loaded.
+	/// </summary>
 	private readonly CMessageBoxIcon? _cachedIcon;
 
 	private Thickness _messagePanelPadding = DefaultMessagePanelPadding;
@@ -616,6 +619,11 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		IsVisibleChanged += CMessageBox_IsVisibleChanged;
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CMessageBox"/> class with the specified message and caption.
+	/// </summary>
+	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
+	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	public CMessageBox(object message, string? caption = null) : this()
 	{
 		Title = caption ?? string.Empty;
@@ -624,9 +632,21 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		SetMessageIcon(null);
 	}
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CMessageBox"/> class with the specified message, caption, and icon.
+	/// </summary>
+	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
+	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
+	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	public CMessageBox(object message, string? caption = null, CMessageBoxIcon icon = CMessageBoxIcon.None) : this(message, caption)
 		=> _cachedIcon = icon;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="CMessageBox"/> class with the specified message, caption, and custom icon.
+	/// </summary>
+	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
+	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
+	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	public CMessageBox(object message, string? caption = null, ImageSource? icon = null) : this(message, caption)
 		=> SetMessageIcon(icon);
 
@@ -638,12 +658,19 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// Shows the message box with the specified buttons.
 	/// <para>The owner of the dialog is determined by the currently active Window or the MainWindow.</para>
 	/// </summary>
+	/// <typeparam name="TResult">The type of result to be returned by the message box.</typeparam>
+	/// <param name="buttons">An array of buttons to be displayed in the message box.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public TResult Show<TResult>(params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), buttons);
 
 	/// <summary>
 	/// Shows the message box with the specified buttons.
 	/// </summary>
+	/// <typeparam name="TResult">The type of result to be returned by the message box.</typeparam>
+	/// <param name="owner">The window that owns this message box.</param>
+	/// <param name="buttons">An array of buttons to be displayed in the message box.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public TResult Show<TResult>(Window? owner, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
 		Icon = owner?.Icon;
@@ -691,12 +718,24 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		return result;
 	}
 
-	/// <inheritdoc cref="Show{TResult}(CMessageBoxButton{TResult}[])"/>
+	/// <summary>
+	/// Shows the message box with predefined buttons.
+	/// <para>The owner of the dialog is determined by the currently active Window or the MainWindow.</para>
+	/// </summary>
+	/// <param name="buttons">The buttons to be displayed in the message box.</param>
+	/// <param name="defaultButton">The button that should be the default (focused) button.</param>
+	/// <returns>The result of the message box.</returns>
 	public CMessageBoxResult Show(CMessageBoxButtons buttons,
 		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(WindowHelper.FindViableOwner(), buttons, defaultButton);
 
-	/// <inheritdoc cref="Show{TResult}(Window?, CMessageBoxButton{TResult}[])"/>
+	/// <summary>
+	/// Shows the message box with predefined buttons.
+	/// </summary>
+	/// <param name="owner">The window that owns this message box.</param>
+	/// <param name="buttons">The buttons to be displayed in the message box.</param>
+	/// <param name="defaultButton">The button that should be the default (focused) button.</param>
+	/// <returns>The result of the message box.</returns>
 	public CMessageBoxResult Show(Window? owner, CMessageBoxButtons buttons,
 		CMessageBoxDefaultButton defaultButton = CMessageBoxDefaultButton.None)
 		=> Show(owner, CreatePresetButtons(buttons, defaultButton));
@@ -740,6 +779,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public static TResult Show<TResult>(object message, string? caption = null,
 		CMessageBoxIcon icon = CMessageBoxIcon.None, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), message, caption, icon, buttons);
@@ -751,6 +791,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public static TResult Show<TResult>(object message, string? caption,
 		ImageSource? icon, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 		=> Show(WindowHelper.FindViableOwner(), message, caption, icon, buttons);
@@ -758,6 +799,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// The classic way of showing a message box.
 	/// </summary>
+	/// <param name="owner">The window that owns this message box.</param>
 	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
@@ -772,6 +814,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// The classic way of showing a message box.
 	/// </summary>
+	/// <param name="owner">The window that owns this message box.</param>
 	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="buttons">An enum of preset buttons which should appear in the <see cref="CMessageBox" />.</param>
@@ -786,10 +829,12 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Opens a message box with the specified content.
 	/// </summary>
+	/// <param name="owner">The window that owns this message box.</param>
 	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="icon">Determines the preset icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public static TResult Show<TResult>(Window? owner, object message, string? caption = null,
 		CMessageBoxIcon icon = CMessageBoxIcon.None, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
@@ -800,10 +845,12 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Opens a message box with the specified custom icon and message.
 	/// </summary>
+	/// <param name="owner">The window that owns this message box.</param>
 	/// <param name="message">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
 	/// <param name="caption">The title of the <see cref="CMessageBox" /> dialog.</param>
 	/// <param name="icon">The custom icon which should appear inside the Message Panel.</param>
 	/// <param name="buttons">A collection of custom buttons which should appear in the <see cref="CMessageBox" />.</param>
+	/// <returns>The result associated with the clicked button.</returns>
 	public static TResult Show<TResult>(Window? owner, object message, string? caption,
 		ImageSource? icon, params CMessageBoxButton<TResult>[] buttons) where TResult : struct
 	{
@@ -855,6 +902,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Sets the preset icon which should be shown inside the Message Panel.
 	/// </summary>
+	/// <param name="icon">The preset icon to display.</param>
 	public void SetMessageIcon(CMessageBoxIcon icon)
 	{
 		if (FindName("PART_IconGrid") is Grid grid)
@@ -930,6 +978,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Sets a custom icon which should be shown inside the Message Panel.
 	/// </summary>
+	/// <param name="icon">The custom icon image to display.</param>
 	public void SetMessageIcon(ImageSource? icon)
 	{
 		if (FindName("PART_PathIcon") is Path pathIcon)
@@ -945,6 +994,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Sets the custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.
 	/// </summary>
+	/// <param name="content">Custom content of the <see cref="CMessageBox" />. This doesn't have to be just text, but may also be a custom control.</param>
 	public void SetMessageContent(object content)
 	{
 		if (FindName("PART_ContentPresenter") is ContentPresenter contentPresenter)
