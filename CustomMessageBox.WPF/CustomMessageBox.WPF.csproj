@@ -1,11 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
-	<LangVersion>10.0</LangVersion>
+    <TargetFrameworks>net6.0-windows;net48</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Custom MessageBox for WPF</Title>
+    <Authors>Kewin Kupilas</Authors>
+    <Description>A highly customizable MessageBox pop-up for WPF with pre-set or custom buttons and plenty of layout options.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Nickelony/CustomMessageBox.WPF</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Nickelony/CustomMessageBox.WPF</RepositoryUrl>
+    <PackageTags>wpf;custom;messagebox;message;box;popup;dialog</PackageTags>
+    <Version>1.0</Version>
+    <PackageIcon>Icon.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Icon\Icon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Resource>
+  </ItemGroup>
 
 </Project>
