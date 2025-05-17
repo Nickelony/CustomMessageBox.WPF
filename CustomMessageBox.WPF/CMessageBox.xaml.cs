@@ -680,7 +680,7 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 
 		Array.ForEach(buttons, AddButton);
 
-		if (owner != null)
+		if (owner is not null)
 		{
 			Owner = owner;
 			ShowDialog();
