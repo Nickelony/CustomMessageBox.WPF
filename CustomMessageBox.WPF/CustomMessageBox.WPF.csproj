@@ -13,7 +13,7 @@
     <PackageProjectUrl>https://github.com/Nickelony/CustomMessageBox.WPF</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Nickelony/CustomMessageBox.WPF</RepositoryUrl>
     <PackageTags>wpf;custom;messagebox;message;box;popup;dialog</PackageTags>
-    <Version>1.0</Version>
+    <Version>1.1</Version>
     <PackageIcon>Icon.png</PackageIcon>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>

@@ -708,13 +708,11 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 		Array.ForEach(buttons, AddButton);
 
 		if (owner is not null)
-		{
 			Owner = owner;
-			ShowDialog();
-		}
 		else
-			Show();
+			WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
+		ShowDialog();
 		return result;
 	}
 
