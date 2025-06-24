@@ -170,6 +170,21 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	public static Thickness DefaultPadding { get; set; } = new(0);
 
 	/// <summary>
+	/// Default window startup location for the <see cref="CMessageBox" />.
+	/// </summary>
+	public static WindowStartupLocation DefaultWindowStartupLocation { get; set; } = WindowStartupLocation.CenterOwner;
+
+	/// <summary>
+	/// Determines whether the <see cref="CMessageBox" /> should be shown in the taskbar by default.
+	/// </summary>
+	public bool ShowInTaskbarByDefault { get; set; } = false;
+
+	/// <summary>
+	/// Determines whether the <see cref="CMessageBox" /> should always be on top of other windows by default.
+	/// </summary>
+	public bool TopmostByDefault { get; set; } = false;
+
+	/// <summary>
 	/// Determines whether the icon in the title bar should always be shown by default. The icon is inherited from the owner window.
 	/// </summary>
 	public static bool ShowTitleBarIconByDefault { get; set; } = false;
@@ -614,6 +629,9 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 			Style = WindowStyleOverride;
 
 		Padding = DefaultPadding;
+		WindowStartupLocation = DefaultWindowStartupLocation;
+		ShowInTaskbar = ShowInTaskbarByDefault;
+		Topmost = TopmostByDefault;
 
 		Loaded += CMessageBox_Loaded;
 		IsVisibleChanged += CMessageBox_IsVisibleChanged;

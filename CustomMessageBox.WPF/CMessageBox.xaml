@@ -6,10 +6,7 @@
 	DataContext="{Binding RelativeSource={RelativeSource Self}}"
 	RenderOptions.BitmapScalingMode="HighQuality"
 	ResizeMode="NoResize"
-	ShowInTaskbar="False"
-	SnapsToDevicePixels="True"
-	Style="{DynamicResource CMessageBoxWindow}"
-	WindowStartupLocation="CenterOwner">
+	Style="{DynamicResource CMessageBoxWindow}">
 
 	<StackPanel Orientation="{Binding DialogContentOrientation}">
 		<StackPanel
