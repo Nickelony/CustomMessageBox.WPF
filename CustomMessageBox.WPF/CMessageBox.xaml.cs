@@ -177,12 +177,12 @@ public partial class CMessageBox : Window, INotifyPropertyChanged
 	/// <summary>
 	/// Determines whether the <see cref="CMessageBox" /> should be shown in the taskbar by default.
 	/// </summary>
-	public bool ShowInTaskbarByDefault { get; set; } = false;
+	public static bool ShowInTaskbarByDefault { get; set; } = false;
 
 	/// <summary>
 	/// Determines whether the <see cref="CMessageBox" /> should always be on top of other windows by default.
 	/// </summary>
-	public bool TopmostByDefault { get; set; } = false;
+	public static bool TopmostByDefault { get; set; } = false;
 
 	/// <summary>
 	/// Determines whether the icon in the title bar should always be shown by default. The icon is inherited from the owner window.
